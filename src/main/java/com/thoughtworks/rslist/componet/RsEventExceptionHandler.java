@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.componet;
 
 import com.thoughtworks.rslist.Exception.Error;
 import com.thoughtworks.rslist.Exception.RsEventIndexInvalidException;
+import com.thoughtworks.rslist.Exception.RsEventRequestParamException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -9,11 +10,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class RsEventExceptionHandler {
-    @ExceptionHandler({RsEventIndexInvalidException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({RsEventIndexInvalidException.class, MethodArgumentNotValidException.class, RsEventRequestParamException.class})
     public ResponseEntity RsEventIndexInvalidExceptionHandler(Exception e) {
         String errorMessage;
         if (e instanceof MethodArgumentNotValidException) {
             errorMessage = "invalid param";
+        } else if (e instanceof RsEventRequestParamException) {
+            errorMessage = e.getMessage();
         } else {
             errorMessage = e.getMessage();
         }

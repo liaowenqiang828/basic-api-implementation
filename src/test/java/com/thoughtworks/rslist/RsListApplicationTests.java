@@ -212,6 +212,13 @@ class RsListApplicationTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid param")));
     }
+
+    @Test
+    void should_throw_invalid_request_param_exception() throws Exception {
+        mockMvc.perform(get("/rs/list?start=1&end=10"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid request param")));
+    }
 }
 
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.Exception.Error;
 import com.thoughtworks.rslist.Exception.RsEventIndexInvalidException;
+import com.thoughtworks.rslist.Exception.RsEventRequestParamException;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
 import org.springframework.http.HttpStatus;
@@ -41,13 +42,23 @@ public class RsController {
     return ResponseEntity.ok(rsEventList.get(index - 1));
   }
 
+//  @GetMapping("/rs/list")
+//  public List<RsEvent> getRsEventBetween(@RequestParam(required = false) Integer start, @RequestParam(required = false
+//  ) Integer end) {
+//    if (start != null && end != null) {
+//      return rsEventList.subList(start - 1, end);
+//    }
+//    return rsEventList;
+//  }
   @GetMapping("/rs/list")
-  public List<RsEvent> getRsEventBetween(@RequestParam(required = false) Integer start, @RequestParam(required = false
+  public ResponseEntity getRsEventBetween(@RequestParam(required = false) Integer start, @RequestParam(required = false
   ) Integer end) {
-    if (start != null && end != null) {
-      return rsEventList.subList(start - 1, end);
+    if (start == null || end == null || start < 1 || end > rsEventList.size()) {
+      throw new RsEventRequestParamException("invalid request param");
+    } else if (start > 1 && end < rsEventList.size()) {
+      return ResponseEntity.ok().body(rsEventList.subList(start - 1, end));
     }
-    return rsEventList;
+    return ResponseEntity.ok().body(rsEventList);
   }
 
   @PostMapping("/rs/event")
