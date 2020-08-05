@@ -2,6 +2,8 @@ package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.rslist.Exception.Error;
+import com.thoughtworks.rslist.Exception.RsEventIndexInvalidException;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
 import org.springframework.http.HttpStatus;
@@ -28,8 +30,12 @@ public class RsController {
   }
 
   @GetMapping("/rs/{index}")
-  public RsEvent getRsEventByIndex(@PathVariable int index) {
-    return rsEventList.get(index - 1);
+  public ResponseEntity getRsEventByIndex(@PathVariable int index) {
+    if (index < 1 || index > rsEventList.size()) {
+      throw new RsEventIndexInvalidException("invalid index");
+    }
+//    return rsEventList.get(index - 1);
+    return ResponseEntity.ok(rsEventList.get(index - 1));
   }
 
   @GetMapping("/rs/list")
@@ -73,4 +79,14 @@ public class RsController {
     rsEventList.add(rsEvent);
 //    return ResponseEntity.created(null).build();
   }
+
+  @ExceptionHandler(RsEventIndexInvalidException.class)
+  public ResponseEntity RsEventIndexInvalidExceptionHandler(RsEventIndexInvalidException e) {
+    Error error = new Error();
+    error.setError(e.getMessage());
+
+    return ResponseEntity.badRequest().body(error);
+  }
+
+
 }

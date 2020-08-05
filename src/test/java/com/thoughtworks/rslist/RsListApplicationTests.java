@@ -192,6 +192,13 @@ class RsListApplicationTests {
 //                .andExpect(status().isOk());
     }
 
+
+    @Test
+    void should_throw_index_exception() throws Exception {
+        mockMvc.perform(get("/rs/0"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid index")));
+    }
 }
 
 
