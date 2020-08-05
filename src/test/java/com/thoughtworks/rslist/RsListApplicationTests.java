@@ -172,26 +172,15 @@ class RsListApplicationTests {
     }
 
     @Test
-    void should_have_user_key() throws Exception{
+    void should_return_201_and_index() throws Exception{
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-//        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", null);
+        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
+        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", user);
         String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/add").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isCreated());
-                    .andExpect(status().isBadRequest());
-//        mockMvc.perform(get("/rs/list"))
-//                .andExpect(jsonPath("$", hasSize(4)))
-//                .andExpect(jsonPath("$[0].eventName", is("第一事件")))
-//                .andExpect(jsonPath("$[0].keyWord", is("无标签")))
-//                .andExpect(jsonPath("$[1].eventName", is("第二事件")))
-//                .andExpect(jsonPath("$[1].keyWord", is("无标签")))
-//                .andExpect(jsonPath("$[2].eventName", is("第三事件")))
-//                .andExpect(jsonPath("$[2].keyWord", is("无标签")))
-//                .andExpect(jsonPath("$[3].eventName", is("添加一条热搜")))
-//                .andExpect(jsonPath("$[3].keyWord", is("娱乐")))
-//                .andExpect(status().isOk());
+                .andExpect(status().isCreated())
+                .andExpect(content().string("3"));
     }
 
 

@@ -85,9 +85,9 @@ public class RsController {
   }
 
   @PostMapping("/rs/add")
-  public void addEventWithoutUser(@RequestBody RsEvent rsEvent) {
+  public ResponseEntity addEventWithoutUser(@RequestBody @Valid RsEvent rsEvent) {
     rsEventList.add(rsEvent);
-//    return ResponseEntity.created(null).build();
+    return ResponseEntity.created(null).body(String.valueOf(rsEventList.size() - 1));
   }
 
 
