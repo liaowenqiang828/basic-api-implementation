@@ -45,18 +45,22 @@ public class RsController {
   @GetMapping("/rs/list")
   public ResponseEntity getRsEventBetween(@RequestParam(required = false) Integer start, @RequestParam(required = false
   ) Integer end) {
-    if (start == null || end == null || start < 1 || end > rsEventList.size()) {
-      throw new RsEventRequestParamException("invalid request param");
-    } else if (start > 1 && end < rsEventList.size()) {
-      return ResponseEntity.ok().body(rsEventList.subList(start - 1, end));
+    if (start != null || end != null) {
+      if (start < 1 || end > rsEventList.size()) {
+        throw new RsEventRequestParamException("invalid request param");
+      } else {
+        return ResponseEntity.ok().body(rsEventList.subList(start - 1, end));
+      }
+    } else {
+      return ResponseEntity.ok().body(rsEventList);
     }
-    return ResponseEntity.ok().body(rsEventList);
   }
 
   @PostMapping("/rs/event")
-  public ResponseEntity<Object> addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
+  public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
     rsEventList.add(rsEvent);
-    return ResponseEntity.created(null).build();
+    return ResponseEntity.created(null)
+            .body(String.valueOf(rsEventList.size() - 1));
   }
 
   @PatchMapping("/rs/{index}")

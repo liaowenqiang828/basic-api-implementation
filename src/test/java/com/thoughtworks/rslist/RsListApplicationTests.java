@@ -17,11 +17,9 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -64,10 +62,14 @@ class RsListApplicationTests {
 
     @Test
     void should_return_add_rs_event() throws Exception {
-        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\"}";
-
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
+        RsEvent rsEvent = new RsEvent("猪肉涨价了", "经济", user);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(content().string("3"));
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(4)))
                 .andExpect(jsonPath("$[0].eventName", is("第一事件")))
