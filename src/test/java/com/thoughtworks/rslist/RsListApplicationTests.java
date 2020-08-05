@@ -24,10 +24,22 @@ class RsListApplicationTests {
     void should_add_user() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiaoMing", 18, "male", "xiaoming@thoughtworks.com", "18888888888");
+        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void user_name_should_less_than_8() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        User user = new User("XiaoMingMing", 18, "male", "xiaoming@thoughtworks.com", "18888888888");
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
 
 }
