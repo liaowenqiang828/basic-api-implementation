@@ -200,6 +200,15 @@ class RsListApplicationTests {
     }
 
     @Test
+    void should_return_rs_event_by_index_without_user() throws Exception {
+        mockMvc.perform(get("/rs/1").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.eventName", is("第一事件")))
+                .andExpect(jsonPath("$.keyWord", is("无标签")))
+                .andExpect(jsonPath("$", not(hasKey("user"))))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void should_throw_index_exception() throws Exception {
         mockMvc.perform(get("/rs/0"))
                 .andExpect(status().isBadRequest())

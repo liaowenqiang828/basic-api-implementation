@@ -17,7 +17,7 @@ public class RsEvent {
         this.keyWord = keyWord;
         this.user = user;
     }
-//
+
     public RsEvent() {}
 
     public RsEvent(String eventName, String keyWord) {
