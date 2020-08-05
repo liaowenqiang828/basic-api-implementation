@@ -20,14 +20,6 @@ public class RsController {
     return rsEventList;
   }
 
-  private Map rsEventToMap(RsEvent rsEvent) {
-    Map<String, String> map = new HashMap<>();
-
-    map.put("eventName", rsEvent.getEventName());
-    map.put("keyWord", rsEvent.getKeyWord());
-    return map;
-  }
-
   @GetMapping("/rs/{index}")
   public RsEvent getRsEventByIndex(@PathVariable int index) {
     return rsEventList.get(index - 1);
@@ -53,7 +45,7 @@ public class RsController {
     RsEvent originRsEvent = rsEventList.get(index - 1);
 
     Map<String, String> stringMap = objectMapper.readValue(jsonString, Map.class);
-    Map rsEventMap = rsEventToMap(originRsEvent);
+    Map rsEventMap = objectMapper.convertValue(originRsEvent, Map.class);
 
     Map<String, String> mapConcate = new HashMap<>();
     mapConcate.putAll(rsEventMap);
