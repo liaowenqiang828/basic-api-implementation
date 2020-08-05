@@ -9,6 +9,7 @@ public class RsEvent {
         this.keyWord = keyWord;
     }
 
+
     public String getEventName() {
         return eventName;
     }
