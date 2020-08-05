@@ -72,8 +72,6 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$[1].keyWord", is("无标签")))
                 .andExpect(jsonPath("$[2].eventName", is("第三事件")))
                 .andExpect(jsonPath("$[2].keyWord", is("无标签")))
-//                .andExpect(jsonPath("$[3].eventName", is("猪肉涨价了")))
-//                .andExpect(jsonPath("$[3].keyWord", is("经济")))
                 .andExpect(status().isOk());
     }
 

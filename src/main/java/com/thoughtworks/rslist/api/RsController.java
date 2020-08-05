@@ -20,18 +20,6 @@ public class RsController {
     return rsEventList;
   }
 
-//  private Map jsonToMap(String string) {
-//    JSONObject jsonObject = JSON.parseObject(string);
-//
-//    Map<String, String> map = new HashMap<>();
-//    Iterator<Map.Entry<String, String>> iterator = jsonObject.entrySet().iterator();
-//    while (iterator.hasNext()) {
-//      Map.Entry<String, String> entry = iterator.next();
-//      map.put(entry.getKey(), entry.getValue());
-//    }
-//    return map;
-//  }
-
   private Map rsEventToMap(RsEvent rsEvent) {
     Map<String, String> map = new HashMap<>();
 
@@ -65,8 +53,6 @@ public class RsController {
     RsEvent originRsEvent = rsEventList.get(index - 1);
 
     Map<String, String> stringMap = objectMapper.readValue(jsonString, Map.class);
-//    Map<String, String> rsEventMap =
-//    Map stringMap = jsonToMap(jsonString);
     Map rsEventMap = rsEventToMap(originRsEvent);
 
     Map<String, String> mapConcate = new HashMap<>();
