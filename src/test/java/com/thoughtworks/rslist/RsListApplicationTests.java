@@ -183,6 +183,21 @@ class RsListApplicationTests {
                 .andExpect(content().string("3"));
     }
 
+    @Test
+    void should_return_rs_event_without_user() throws Exception {
+        mockMvc.perform(get("/rs/list").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].eventName", is("第一事件")))
+                .andExpect(jsonPath("$[0].keyWord", is("无标签")))
+                .andExpect(jsonPath("$[0]", not(hasKey("user"))))
+                .andExpect(jsonPath("$[1].eventName", is("第二事件")))
+                .andExpect(jsonPath("$[1].keyWord", is("无标签")))
+                .andExpect(jsonPath("$[1]", not(hasKey("user"))))
+                .andExpect(jsonPath("$[2].eventName", is("第三事件")))
+                .andExpect(jsonPath("$[2].keyWord", is("无标签")))
+                .andExpect(jsonPath("$[0]", not(hasKey("user"))))
+                .andExpect(status().isOk());
+    }
 
     @Test
     void should_throw_index_exception() throws Exception {

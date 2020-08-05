@@ -1,5 +1,8 @@
 package com.thoughtworks.rslist.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jdk.nashorn.internal.ir.annotations.Ignore;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -22,10 +25,12 @@ public class RsEvent {
         this.keyWord = keyWord;
     }
 
+    @Ignore
     public User getUser() {
         return user;
     }
 
+    @JsonIgnore
     public void setUser(User user) {
         this.user = user;
     }
