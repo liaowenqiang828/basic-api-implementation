@@ -8,11 +8,15 @@ import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @RestController
+@Validated
 public class RsController {
   private final List<RsEvent> rsEventList = initRsEventList();
 
@@ -34,7 +38,6 @@ public class RsController {
     if (index < 1 || index > rsEventList.size()) {
       throw new RsEventIndexInvalidException("invalid index");
     }
-//    return rsEventList.get(index - 1);
     return ResponseEntity.ok(rsEventList.get(index - 1));
   }
 
@@ -48,7 +51,7 @@ public class RsController {
   }
 
   @PostMapping("/rs/event")
-  public ResponseEntity addRsEvent(@RequestBody RsEvent rsEvent) {
+  public ResponseEntity<Object> addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
     rsEventList.add(rsEvent);
     return ResponseEntity.created(null).build();
   }
@@ -80,13 +83,7 @@ public class RsController {
 //    return ResponseEntity.created(null).build();
   }
 
-  @ExceptionHandler(RsEventIndexInvalidException.class)
-  public ResponseEntity RsEventIndexInvalidExceptionHandler(RsEventIndexInvalidException e) {
-    Error error = new Error();
-    error.setError(e.getMessage());
 
-    return ResponseEntity.badRequest().body(error);
-  }
 
 
 }

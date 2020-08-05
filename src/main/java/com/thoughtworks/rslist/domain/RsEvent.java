@@ -1,8 +1,12 @@
 package com.thoughtworks.rslist.domain;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 public class RsEvent {
     String eventName;
     String keyWord;
+    @Valid
     User user;
 
     public RsEvent(String eventName, String keyWord, User user) {
@@ -10,7 +14,7 @@ public class RsEvent {
         this.keyWord = keyWord;
         this.user = user;
     }
-
+//
     public RsEvent() {}
 
     public RsEvent(String eventName, String keyWord) {
