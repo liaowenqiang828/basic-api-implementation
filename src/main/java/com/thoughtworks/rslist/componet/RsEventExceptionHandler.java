@@ -14,7 +14,11 @@ public class RsEventExceptionHandler {
     public ResponseEntity RsEventIndexInvalidExceptionHandler(Exception e) {
         String errorMessage;
         if (e instanceof MethodArgumentNotValidException) {
-            errorMessage = "invalid param";
+            if (e.getMessage().contains("Field error in object 'rsEvent'")) {
+                errorMessage = "invalid param";
+            } else {
+                errorMessage = "invalid user";
+            }
         } else if (e instanceof RsEventRequestParamException) {
             errorMessage = e.getMessage();
         } else {

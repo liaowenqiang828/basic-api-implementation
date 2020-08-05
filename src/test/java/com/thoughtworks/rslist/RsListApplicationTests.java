@@ -219,8 +219,19 @@ class RsListApplicationTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid request param")));
     }
-}
 
+    @Test
+    void should_throw_invalid_user_exception() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        User user = new User("XiaoMi", 19, "male", "xiaomi@thoughtworks.com", "188888888");
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid user")));
+    }
+
+}
 
 
 
