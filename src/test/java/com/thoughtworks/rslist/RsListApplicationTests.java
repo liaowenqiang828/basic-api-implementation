@@ -2,7 +2,9 @@ package com.thoughtworks.rslist;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,8 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.hasSize;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,6 +29,19 @@ class RsListApplicationTests {
 
     @Autowired
     MockMvc mockMvc;
+
+    @BeforeEach
+    void setup() {
+        List<RsEvent> rsEventList = new ArrayList<>();
+
+        User user1 = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
+        User user2 = new User("XiLi", 20, "male", "xiao.li@thoughtworks.com", "18888888887");
+        User user3 = new User("XiHong", 21, "female", "xiao.hong@thoughtworks.com", "18888888886");
+
+        rsEventList.add(new RsEvent("第一事件", "无标签", user1));
+        rsEventList.add(new RsEvent("第二事件", "无标签", user2));
+        rsEventList.add(new RsEvent("第三事件", "无标签", user3));
+    }
 
     @Test
     void get_one_rs_event_by_index() throws Exception {
@@ -50,7 +67,7 @@ class RsListApplicationTests {
         String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\"}";
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(4)))
                 .andExpect(jsonPath("$[0].eventName", is("第一事件")))
@@ -100,7 +117,6 @@ class RsListApplicationTests {
         User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-
                 .andExpect(status().isOk());
     }
 
@@ -113,4 +129,51 @@ class RsListApplicationTests {
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+    @Test
+    void user_age_should_between_18_and_100() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        User user = new User("XiaoMi", 17, "male", "xiaoming@thoughtworks.com", "18888888888");
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_have_user_key() throws Exception{
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+//        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
+        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", null);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(post("/rs/add").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isCreated());
+                    .andExpect(status().isBadRequest());
+//        mockMvc.perform(get("/rs/list"))
+//                .andExpect(jsonPath("$", hasSize(4)))
+//                .andExpect(jsonPath("$[0].eventName", is("第一事件")))
+//                .andExpect(jsonPath("$[0].keyWord", is("无标签")))
+//                .andExpect(jsonPath("$[1].eventName", is("第二事件")))
+//                .andExpect(jsonPath("$[1].keyWord", is("无标签")))
+//                .andExpect(jsonPath("$[2].eventName", is("第三事件")))
+//                .andExpect(jsonPath("$[2].keyWord", is("无标签")))
+//                .andExpect(jsonPath("$[3].eventName", is("添加一条热搜")))
+//                .andExpect(jsonPath("$[3].keyWord", is("娱乐")))
+//                .andExpect(status().isOk());
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

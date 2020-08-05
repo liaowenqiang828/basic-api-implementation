@@ -3,6 +3,9 @@ package com.thoughtworks.rslist.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
+import com.thoughtworks.rslist.domain.User;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -12,10 +15,15 @@ public class RsController {
   private final List<RsEvent> rsEventList = initRsEventList();
 
   private List<RsEvent> initRsEventList() {
-    List<RsEvent> rsEventList = new ArrayList<>(3);
-    rsEventList.add(new RsEvent("第一事件", "无标签"));
-    rsEventList.add(new RsEvent("第二事件", "无标签"));
-    rsEventList.add(new RsEvent("第三事件", "无标签"));
+    List<RsEvent> rsEventList = new ArrayList<>();
+    User user1 = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
+    User user2 = new User("XiLi", 20, "male", "xiao.li@thoughtworks.com", "18888888887");
+    User user3 = new User("XiHong", 21, "female", "xiao.hong@thoughtworks.com", "18888888886");
+
+    rsEventList.add(new RsEvent("第一事件", "无标签", user1));
+    rsEventList.add(new RsEvent("第二事件", "无标签", user2));
+    rsEventList.add(new RsEvent("第三事件", "无标签", user3));
+
     return rsEventList;
   }
 
@@ -28,14 +36,15 @@ public class RsController {
   public List<RsEvent> getRsEventBetween(@RequestParam(required = false) Integer start, @RequestParam(required = false
   ) Integer end) {
     if (start != null && end != null) {
-      return rsEventList.subList(start - 1, end - 1);
+      return rsEventList.subList(start - 1, end);
     }
     return rsEventList;
   }
 
   @PostMapping("/rs/event")
-  public void addRsEvent(@RequestBody RsEvent rsEvent) {
+  public ResponseEntity addRsEvent(@RequestBody RsEvent rsEvent) {
     rsEventList.add(rsEvent);
+    return ResponseEntity.created(null).build();
   }
 
   @PatchMapping("/rs/{index}")
@@ -57,5 +66,11 @@ public class RsController {
   @DeleteMapping("/rs/{index}")
   public void deleteRsEventByIndex(@PathVariable int index) {
     rsEventList.remove(index - 1);
+  }
+
+  @PostMapping("/rs/add")
+  public void addEventWithoutUser(@RequestBody RsEvent rsEvent) {
+    rsEventList.add(rsEvent);
+//    return ResponseEntity.created(null).build();
   }
 }
