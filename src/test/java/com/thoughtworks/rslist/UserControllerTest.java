@@ -56,4 +56,21 @@ public class UserControllerTest {
         assertEquals("xiaoming", userDtoList.get(0).getUserName());
         assertEquals("a@b.com", userDtoList.get(0).getEmail());
     }
+
+    @Test
+    void should_return_user_by_id () throws Exception {
+        User user = new User("xiaoming", 25, "male", "a@b.com", "18888888888", 5);
+        String jsonString = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(get("/user/1").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.userName", is("xiaoming")))
+                .andExpect(jsonPath("$.gender", is("male")))
+                .andExpect(jsonPath("$.email", is("a@b.com")))
+                .andExpect(jsonPath("$.phone", is("18888888888")))
+                .andExpect(jsonPath("$.age", is(25)))
+                .andExpect(jsonPath("$.voteNum", is(5)))
+                .andExpect(status().isOk());
+    }
 }

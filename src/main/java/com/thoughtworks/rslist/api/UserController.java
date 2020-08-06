@@ -5,15 +5,14 @@ import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull.*;
 import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -70,6 +69,13 @@ public class UserController {
         userDto.setVoteNum(user.getVoteNum());
 
         userRepository.save(userDto);
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity getUserById(@PathVariable Integer id) {
+        UserDto userDto = userRepository.findUserDtosById(id);
+
+        return ResponseEntity.ok(userDto);
     }
 
 }
