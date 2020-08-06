@@ -115,7 +115,9 @@ public class RsController {
 //    if (rsEventListFiltered.isEmpty()) {
 //      userList.add(rsEvent.getUser());
 //    }
-
+    if (!userRepository.findById(rsEvent.getUserId()).isPresent()) {
+      return ResponseEntity.badRequest().build();
+    }
     RsEventDto rsEventDto = RsEventDto.builder().eventName(rsEvent.getEventName()).keyWord(rsEvent.getKeyWord())
             .userId(rsEvent.getUserId()).build();
     rsEventRepository.save(rsEventDto);

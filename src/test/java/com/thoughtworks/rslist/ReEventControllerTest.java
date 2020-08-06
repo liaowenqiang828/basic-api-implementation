@@ -60,11 +60,8 @@ public class ReEventControllerTest {
     }
 
     @Test
-    void should_add_rs_event_when_user_not_exist() throws Exception {
-        UserDto save = userRepository.save(UserDto.builder()
-                .userName("li").age(20).gender("male")
-                .email("li@li.com").phone("18888888884")
-                .voteNum(4).build());
+    void should_add_rs_event_when_user_exist() throws Exception {
+        UserDto save = userRepository.save(UserDto.builder().userName("li").age(20).gender("male").email("li@li.com").phone("18888888884").voteNum(4).build());
 
         String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\",\"userId\":" + save.getId() + "}";
 
@@ -79,4 +76,11 @@ public class ReEventControllerTest {
 //        assertEquals(save.getId(), rsEventDtoList.get(0).getUserId());
     }
 
+    @Test
+    void should_add_rs_event_when_user_not_exist() throws Exception {
+        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\",\"userId\":100}";
+
+        mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
