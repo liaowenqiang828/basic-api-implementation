@@ -23,8 +23,6 @@ public class UserController {
     private static List<User> userList = new ArrayList<>();
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    RsEventRepository rsEventRepository;
 
 //    private final List<RsEvent> rsEventList = initRsEventList();
 //    private final List<User> userList = initUserList();
@@ -83,10 +81,8 @@ public class UserController {
     }
 
     @DeleteMapping("/user/{id}")
-    @Transactional
     public ResponseEntity deleteUserById(@PathVariable Integer id) {
         userRepository.deleteById(id);
-        rsEventRepository.deleteAllByUserId(id);
 
         return ResponseEntity.ok().build();
     }

@@ -8,6 +8,7 @@ import com.thoughtworks.rslist.Exception.RsEventRequestParamException;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.dto.RsEventDto;
+import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,11 +116,12 @@ public class RsController {
 //    if (rsEventListFiltered.isEmpty()) {
 //      userList.add(rsEvent.getUser());
 //    }
+    Optional<UserDto> userDto = userRepository.findById(rsEvent.getUserId());
     if (!userRepository.findById(rsEvent.getUserId()).isPresent()) {
       return ResponseEntity.badRequest().build();
     }
     RsEventDto rsEventDto = RsEventDto.builder().eventName(rsEvent.getEventName()).keyWord(rsEvent.getKeyWord())
-            .userId(rsEvent.getUserId()).build();
+            .userDto(userDto.get()).build();
     rsEventRepository.save(rsEventDto);
 
     return ResponseEntity.created(null)

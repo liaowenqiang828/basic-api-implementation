@@ -1,12 +1,12 @@
 package com.thoughtworks.rslist.dto;
 
-import jdk.nashorn.internal.objects.annotations.Constructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -25,4 +25,7 @@ public class UserDto {
     private String email;
     private String phone;
     private int voteNum;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "userDto")
+    private List<RsEventDto> rsEventDtoList;
 }
