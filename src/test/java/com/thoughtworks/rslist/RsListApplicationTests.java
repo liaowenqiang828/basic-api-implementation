@@ -32,9 +32,9 @@ class RsListApplicationTests {
     void setup() {
         List<RsEvent> rsEventList = new ArrayList<>();
 
-        User user1 = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
-        User user2 = new User("XiLi", 20, "male", "xiao.li@thoughtworks.com", "18888888887");
-        User user3 = new User("XiHong", 21, "female", "xiao.hong@thoughtworks.com", "18888888886");
+        User user1 = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 1);
+        User user2 = new User("XiLi", 20, "male", "xiao.li@thoughtworks.com", "18888888887", 2);
+        User user3 = new User("XiHong", 21, "female", "xiao.hong@thoughtworks.com", "18888888886", 3);
 
         rsEventList.add(new RsEvent("第一事件", "无标签", user1));
         rsEventList.add(new RsEvent("第二事件", "无标签", user2));
@@ -64,7 +64,7 @@ class RsListApplicationTests {
     void should_return_add_rs_event() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
+        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 4);
         RsEvent rsEvent = new RsEvent("猪肉涨价了", "经济", user);
         String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
@@ -116,9 +116,28 @@ class RsListApplicationTests {
     void should_add_user() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
+        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 4);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void should_add_user_to_user_list() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        User user = new User("XiQin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 4);
+        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", user);
+
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
+//        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\",\"user\": {\"userName\":\"xyxia\",\"age\": 19,\"gender\": \"male\",\"email\": \"a@b.com\",\"phone\": \"18888888888\"}}";
+
+        mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/user"))
+                .andExpect(jsonPath("$", hasSize(4)))
+                .andExpect(jsonPath("$[3].user.userName", is("xyxia")))
                 .andExpect(status().isOk());
     }
 
@@ -126,7 +145,7 @@ class RsListApplicationTests {
     void user_name_should_less_than_8() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiaoMingMing", 18, "male", "xiaoming@thoughtworks.com", "18888888888");
+        User user = new User("XiaoMingMing", 18, "male", "xiaoming@thoughtworks.com", "18888888888", 4);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -135,7 +154,7 @@ class RsListApplicationTests {
     void user_age_should_between_18_and_100() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiaoMi", 17, "male", "xiaoming@thoughtworks.com", "18888888888");
+        User user = new User("XiaoMi", 17, "male", "xiaoming@thoughtworks.com", "18888888888", 4);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -145,7 +164,7 @@ class RsListApplicationTests {
     void should_have_right_format_email() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiaoMi", 19, "male", "xiaomi.thoughtworks.com", "18888888888");
+        User user = new User("XiaoMi", 19, "male", "xiaomi.thoughtworks.com", "18888888888", 4);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -155,7 +174,7 @@ class RsListApplicationTests {
     void phone_number_should_start_with_1() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiaoMi", 19, "male", "xiaomi@thoughtworks.com", "88888888888");
+        User user = new User("XiaoMi", 19, "male", "xiaomi@thoughtworks.com", "88888888888", 4);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -165,7 +184,7 @@ class RsListApplicationTests {
     void phone_number_length_should_be_11() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiaoMi", 19, "male", "xiaomi@thoughtworks.com", "188888888");
+        User user = new User("XiaoMi", 19, "male", "xiaomi@thoughtworks.com", "188888888", 4);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -175,7 +194,7 @@ class RsListApplicationTests {
     void should_return_201_and_index() throws Exception{
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
+        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 4);
         RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", user);
         String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/add").content(jsonString).contentType(MediaType.APPLICATION_JSON))
@@ -219,7 +238,7 @@ class RsListApplicationTests {
     void should_throw_index_param_exception() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiaoMiiiiiii", 19, "male", "xiaomi@thoughtworks.com", "18888888888");
+        User user = new User("XiaoMiiiiiii", 19, "male", "xiaomi@thoughtworks.com", "18888888888", 4);
         RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", user);
         String jsonString = objectMapper.writeValueAsString(rsEvent);
 
@@ -239,11 +258,16 @@ class RsListApplicationTests {
     void should_throw_invalid_user_exception() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiaoMi", 19, "male", "xiaomi@thoughtworks.com", "188888888");
+        User user = new User("XiaoMi", 19, "male", "xiaomi@thoughtworks.com", "188888888", 4);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid user")));
+    }
+
+    @Test
+    void should_return_all_users() throws Exception {
+
     }
 
 }

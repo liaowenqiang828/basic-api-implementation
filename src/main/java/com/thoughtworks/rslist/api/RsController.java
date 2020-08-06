@@ -14,18 +14,58 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @Validated
 public class RsController {
   private final List<RsEvent> rsEventList = initRsEventList();
+  private final List<User> userList = initUserList();
+
+  public RsController() throws SQLException {
+  }
+
+  private static List<RsEvent> createInitialise() throws SQLException {
+    Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/rsSystem",
+            "root", "liaowenqiang");
+    DatabaseMetaData databaseMetaData = connection.getMetaData();
+    ResultSet resultSet = databaseMetaData.getTables(null, null, "rsEvent", null);
+
+    if (!resultSet.next()) {
+      String createTableSql = "create table rs_event(eventName varchar(200) not null, keyWord varchar(100) not null)";
+      Statement statement = connection.createStatement();
+      statement.execute(createTableSql);
+    }
+    return new ArrayList<>();
+  }
+
 
   private List<RsEvent> initRsEventList() {
+    return getRsEventList();
+  }
+
+  private List<User> initUserList() {
+    return getUserList();
+  }
+
+  static List<User> getUserList() {
+    List<User> userList = new ArrayList<>();
+
+    userList.add(new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 1));
+    userList.add(new User("XiLi", 20, "male", "xiao.li@thoughtworks.com", "18888888887", 2));
+    userList.add(new User("XiHong", 21, "female", "xiao.hong@thoughtworks.com", "18888888886", 3));
+
+    return userList;
+  }
+
+  static List<RsEvent> getRsEventList() {
     List<RsEvent> rsEventList = new ArrayList<>();
-    User user1 = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888");
-    User user2 = new User("XiLi", 20, "male", "xiao.li@thoughtworks.com", "18888888887");
-    User user3 = new User("XiHong", 21, "female", "xiao.hong@thoughtworks.com", "18888888886");
+
+    User user1 = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 1);
+    User user2 = new User("XiLi", 20, "male", "xiao.li@thoughtworks.com", "18888888887", 2);
+    User user3 = new User("XiHong", 21, "female", "xiao.hong@thoughtworks.com", "18888888886", 3);
 
     rsEventList.add(new RsEvent("第一事件", "无标签", user1));
     rsEventList.add(new RsEvent("第二事件", "无标签", user2));
@@ -58,9 +98,23 @@ public class RsController {
 
   @PostMapping("/rs/event")
   public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
+//    ObjectMapper objectMapper = new ObjectMapper();
+//    RsEvent event = objectMapper.readValue(rsEvent, RsEvent.class);
+//
+//    String insertedUserName = rsEvent.getUser().getUserName();
+//    List<RsEvent> rsEventListFiltered = rsEventList.stream().filter(rsEvent1 -> rsEvent1.getUser().getUserName() == insertedUserName).collect(Collectors.toList());
+//    if (rsEventListFiltered.isEmpty()) {
+//      userList.add(rsEvent.getUser());
+//    }
+
     rsEventList.add(rsEvent);
     return ResponseEntity.created(null)
             .body(String.valueOf(rsEventList.size() - 1));
+  }
+
+  @GetMapping("/user")
+  public List<User> getUsersList() {
+    return userList;
   }
 
   @PatchMapping("/rs/{index}")
@@ -89,8 +143,5 @@ public class RsController {
     rsEventList.add(rsEvent);
     return ResponseEntity.created(null).body(String.valueOf(rsEventList.size() - 1));
   }
-
-
-
 
 }

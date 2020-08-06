@@ -16,13 +16,24 @@ public class User {
     private String email;
     @Pattern(regexp = "1\\d{10}")
     private String phone;
+    @NotNull
+    private int voteNum;
 
-    public User(String userName, int age, String gender, String email, String phone) {
+    public int getVoteNum() {
+        return voteNum;
+    }
+
+    public void setVoteNum(int voteNum) {
+        this.voteNum = voteNum;
+    }
+
+    public User(String userName, int age, String gender, String email, String phone, int voteNum) {
         this.userName = userName;
         this.age = age;
         this.gender = gender;
         this.email = email;
         this.phone = phone;
+        this.voteNum = voteNum;
     }
 
     public String getUserName() {
