@@ -103,6 +103,8 @@ public class UserControllerTest {
     @Test
     public void should_delete_user() throws Exception {
 
+        UserDto userDto = userRepository.save(UserDto.builder().userName("li").age(20)
+                .gender("male").email("li@li.com").phone("18888888884").voteNum(4).build());
         RsEventDto rsEventDto = RsEventDto.builder().eventName("猪肉涨价了")
                 .keyWord("经济").userDto(userDto).build();
         rsEventRepository.save(rsEventDto);

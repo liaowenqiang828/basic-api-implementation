@@ -81,6 +81,7 @@ public class UserController {
     }
 
     @DeleteMapping("/user/{id}")
+    @Transactional
     public ResponseEntity deleteUserById(@PathVariable Integer id) {
         userRepository.deleteById(id);
 
