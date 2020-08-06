@@ -41,6 +41,12 @@ public class UserControllerTest {
     @BeforeEach
     void setup() {
         objectMapper = new ObjectMapper();
+        UserDto userDto1 = UserDto.builder().userName("zhao").age(20).gender("male").email("zhao@zhao.com").phone("18888888881").voteNum(1).build();
+        UserDto userDto2 = UserDto.builder().userName("qian").age(20).gender("male").email("qian@qian.com").phone("18888888882").voteNum(2).build();
+        UserDto userDto3 = UserDto.builder().userName("sun").age(20).gender("male").email("sun@sun.com").phone("18888888883").voteNum(3).build();
+        userRepository.save(userDto1);
+        userRepository.save(userDto2);
+        userRepository.save(userDto3);
     }
 
     @Test
@@ -52,9 +58,9 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
 
         List<UserDto> userDtoList = userRepository.findAll();
-        assertEquals(1, userDtoList.size());
-        assertEquals("xiaoming", userDtoList.get(0).getUserName());
-        assertEquals("a@b.com", userDtoList.get(0).getEmail());
+        assertEquals(4, userDtoList.size());
+        assertEquals("xiaoming", userDtoList.get(3).getUserName());
+        assertEquals("a@b.com", userDtoList.get(3).getEmail());
     }
 
     @Test
@@ -64,7 +70,7 @@ public class UserControllerTest {
 
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON));
 
-        mockMvc.perform(get("/user/1").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/user/4").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.userName", is("xiaoming")))
                 .andExpect(jsonPath("$.gender", is("male")))
                 .andExpect(jsonPath("$.email", is("a@b.com")))
@@ -72,5 +78,15 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.age", is(25)))
                 .andExpect(jsonPath("$.voteNum", is(5)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void should_delete_user_by_id () throws Exception {
+        mockMvc.perform(delete("/user/1").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        List<UserDto> userDotList = userRepository.findAll();
+        assertEquals(2, userDotList.size());
+        assertEquals("qian", userDotList.get(0).getUserName());
+
     }
 }

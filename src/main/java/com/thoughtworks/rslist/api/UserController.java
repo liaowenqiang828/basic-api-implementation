@@ -36,9 +36,9 @@ public class UserController {
 //    static List<User> getUserList() {
 //        List<User> userList = new ArrayList<>();
 //
-//        userList.add(new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888"));
-//        userList.add(new User("XiLi", 20, "male", "xiao.li@thoughtworks.com", "18888888887"));
-//        userList.add(new User("XiHong", 21, "female", "xiao.hong@thoughtworks.com", "18888888886"));
+//        userList.add(new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 1));
+//        userList.add(new User("XiLi", 20, "male", "xiao.li@thoughtworks.com", "18888888887", 2));
+//        userList.add(new User("XiHong", 21, "female", "xiao.hong@thoughtworks.com", "18888888886", 3));
 //
 //        return userList;
 //    }
@@ -76,6 +76,11 @@ public class UserController {
         UserDto userDto = userRepository.findUserDtosById(id);
 
         return ResponseEntity.ok(userDto);
+    }
+
+    @DeleteMapping("/user/{id}")
+    public void deleteUserById(@PathVariable Integer id) {
+        userRepository.deleteById(id);
     }
 
 }
