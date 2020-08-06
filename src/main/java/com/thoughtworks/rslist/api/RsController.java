@@ -7,6 +7,10 @@ import com.thoughtworks.rslist.Exception.RsEventIndexInvalidException;
 import com.thoughtworks.rslist.Exception.RsEventRequestParamException;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.dto.RsEventDto;
+import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +27,11 @@ import java.util.stream.Collectors;
 public class RsController {
   private final List<RsEvent> rsEventList = initRsEventList();
   private final List<User> userList = initUserList();
+
+  @Autowired
+  RsEventRepository rsEventRepository;
+  @Autowired
+  UserRepository userRepository;
 
   public RsController() throws SQLException {
   }
@@ -67,9 +76,9 @@ public class RsController {
     User user2 = new User("XiLi", 20, "male", "xiao.li@thoughtworks.com", "18888888887", 2);
     User user3 = new User("XiHong", 21, "female", "xiao.hong@thoughtworks.com", "18888888886", 3);
 
-    rsEventList.add(new RsEvent("第一事件", "无标签", user1));
-    rsEventList.add(new RsEvent("第二事件", "无标签", user2));
-    rsEventList.add(new RsEvent("第三事件", "无标签", user3));
+    rsEventList.add(new RsEvent("第一事件", "无标签", 1));
+    rsEventList.add(new RsEvent("第二事件", "无标签", 1));
+    rsEventList.add(new RsEvent("第三事件", "无标签", 3));
 
     return rsEventList;
   }
@@ -107,7 +116,10 @@ public class RsController {
 //      userList.add(rsEvent.getUser());
 //    }
 
-    rsEventList.add(rsEvent);
+    RsEventDto rsEventDto = RsEventDto.builder().eventName(rsEvent.getEventName()).keyWord(rsEvent.getKeyWord())
+            .userId(rsEvent.getUserId()).build();
+    rsEventRepository.save(rsEventDto);
+
     return ResponseEntity.created(null)
             .body(String.valueOf(rsEventList.size() - 1));
   }
