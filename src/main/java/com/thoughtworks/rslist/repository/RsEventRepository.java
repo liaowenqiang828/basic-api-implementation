@@ -8,4 +8,6 @@ import java.util.List;
 public interface RsEventRepository extends CrudRepository<RsEventDto, Integer> {
     @Override
     List<RsEventDto> findAll();
+
+    void deleteAllByUserId(Integer userId);
 }
