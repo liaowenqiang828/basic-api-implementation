@@ -6,20 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
+@Data
 @Builder
-@Table(name = "rs_event")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class RsEventDto {
+public class VoteDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String eventName;
-    private String keyWord;
-    @ManyToOne
-    private UserDto userDto;
-
+    private LocalDateTime localDateTime;
+    private int num;
+    @ManyToOne @JoinColumn(name = "user_id") private UserDto user;
+    @ManyToOne @JoinColumn(name = "rs_event_id") private RsEventDto rsEvent;
 }

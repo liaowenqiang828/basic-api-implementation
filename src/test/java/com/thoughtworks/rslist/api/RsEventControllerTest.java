@@ -1,4 +1,4 @@
-package com.thoughtworks.rslist;
+package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ReEventControllerTest {
+public class RsEventControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -40,19 +40,7 @@ public class ReEventControllerTest {
     RsEventRepository rsEventRepository;
 
     @BeforeEach
-        void setup() {
-//        UserDto userDto1 = UserDto.builder().userName("zhao").age(20).gender("male").email("zhao@zhao.com").phone("18888888881").voteNum(1).build();
-//        UserDto userDto2 = UserDto.builder().userName("qian").age(20).gender("male").email("qian@qian.com").phone("18888888882").voteNum(2).build();
-//        UserDto userDto3 = UserDto.builder().userName("sun").age(20).gender("male").email("sun@sun.com").phone("18888888883").voteNum(3).build();
-//        userRepository.save(userDto1);
-//        userRepository.save(userDto2);
-//        userRepository.save(userDto3);
 
-//        rsEventRepository.save(RsEventDto.builder().eventName("第一事件").keyWord("无标签").userId(1).build());
-//        rsEventRepository.save(RsEventDto.builder().eventName("第二事件").keyWord("无标签").userId(2).build());
-//        rsEventRepository.save(RsEventDto.builder().eventName("第三事件").keyWord("无标签").userId(3).build());
-
-    }
     @AfterEach
         void tearDown() {
         userRepository.deleteAll();
@@ -82,5 +70,10 @@ public class ReEventControllerTest {
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_update_rs_event_when_userId_match_with_eventId() {
+
     }
 }
