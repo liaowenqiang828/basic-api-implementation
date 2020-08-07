@@ -11,11 +11,13 @@ public class RsEvent {
     String keyWord;
     @Valid
     int userId;
+    int voteNum;
 
-    public RsEvent(String eventName, String keyWord, int userId) {
+    public RsEvent(String eventName, String keyWord, int userId, int voteNum) {
         this.eventName = eventName;
         this.keyWord = keyWord;
         this.userId = userId;
+        this.voteNum = voteNum;
     }
 
     public RsEvent() {}
@@ -23,6 +25,18 @@ public class RsEvent {
     public RsEvent(String eventName, String keyWord) {
         this.eventName = eventName;
         this.keyWord = keyWord;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getVoteNum() {
+        return voteNum;
+    }
+
+    public void setVoteNum(int voteNum) {
+        this.voteNum = voteNum;
     }
 
     @Ignore

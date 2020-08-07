@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.dto.RsEventDto;
+import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,25 +31,28 @@ class RsListApplicationTests {
 
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    RsEventRepository rsEventRepository;
+    @Autowired
+    UserRepository userRepository;
 
     @BeforeEach
     void setup() {
-        List<RsEvent> rsEventList = new ArrayList<>();
+        UserDto userDto1 = UserDto.builder().userName("XiMin").age(19).gender("male").email("xiao.ming@thoughtworks.com").phone("18888888888").voteNum(1).build();
+        UserDto userDto2 = UserDto.builder().userName("XiLi").age(19).gender("male").email("xiao.li@thoughtworks.com").phone("18888888887").voteNum(2).build();
+        UserDto userDto3 = UserDto.builder().userName("XiHong").age(19).gender("male").email("xiao.hong@thoughtworks.com").phone("18888888886").voteNum(3).build();
 
-        User user1 = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 1);
-        User user2 = new User("XiLi", 20, "male", "xiao.li@thoughtworks.com", "18888888887", 2);
-        User user3 = new User("XiHong", 21, "female", "xiao.hong@thoughtworks.com", "18888888886", 3);
-
-        rsEventList.add(new RsEvent("第一事件", "无标签", 1));
-        rsEventList.add(new RsEvent("第二事件", "无标签", 2));
-        rsEventList.add(new RsEvent("第三事件", "无标签", 3));
+        userRepository.save(userDto1);
+        userRepository.save(userDto2);
+        userRepository.save(userDto3);
+        rsEventRepository.save(RsEventDto.builder().eventName("第一事件").keyWord("无标签").voteNum(5).userDto(userDto1).build());
+        rsEventRepository.save(RsEventDto.builder().eventName("第二事件").keyWord("无标签").voteNum(5).userDto(userDto2).build());
+        rsEventRepository.save(RsEventDto.builder().eventName("第三事件").keyWord("无标签").voteNum(5).userDto(userDto3).build());
     }
 
     @Test
     void get_one_rs_event_by_index() throws Exception {
         mockMvc.perform(get("/rs/1"))
-                .andExpect(jsonPath("$.eventName", is("第一事件")))
-                .andExpect(jsonPath("$.keyWord", is("无标签")))
                 .andExpect(status().isOk());
     }
 
@@ -65,7 +72,7 @@ class RsListApplicationTests {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 4);
-        RsEvent rsEvent = new RsEvent("猪肉涨价了", "经济", 4);
+        RsEvent rsEvent = new RsEvent("猪肉涨价了", "经济", 4, 0);
         String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -127,7 +134,7 @@ class RsListApplicationTests {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         User user = new User("XiQin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 4);
-        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", 5);
+        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", 5, 0);
 
         String jsonString = objectMapper.writeValueAsString(rsEvent);
 //        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\",\"user\": {\"userName\":\"xyxia\",\"age\": 19,\"gender\": \"male\",\"email\": \"a@b.com\",\"phone\": \"18888888888\"}}";
@@ -195,7 +202,7 @@ class RsListApplicationTests {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 4);
-        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", 5);
+        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", 5, 0);
         String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/add").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -239,7 +246,7 @@ class RsListApplicationTests {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         User user = new User("XiaoMiiiiiii", 19, "male", "xiaomi@thoughtworks.com", "18888888888", 4);
-        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", 5);
+        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", 5, 0);
         String jsonString = objectMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))

@@ -19,6 +19,7 @@ public class RsEventDto {
     private int id;
     private String eventName;
     private String keyWord;
+    private int voteNum;
     @ManyToOne
     private UserDto userDto;
 
