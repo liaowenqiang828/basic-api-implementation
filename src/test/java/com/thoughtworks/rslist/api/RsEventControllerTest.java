@@ -105,4 +105,17 @@ public class RsEventControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void should_only_update_event_name() throws Exception {
+        userDto = userRepository.save(userDto);
+        rsEventDto = rsEventRepository.save(rsEventDto);
+        String jsonString = "{\"eventName\":\"猪肉降价了\",\"userId\":" + userDto.getId() + "}";
+
+        mockMvc.perform(patch("/rs/update/" + rsEventDto.getUserDto().getId())
+                .content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        rsEventDto = rsEventRepository.findById(userDto.getId()).get();
+        assertEquals(rsEventDto.getEventName(), "猪肉降价了");
+        assertEquals(rsEventDto.getKeyWord(), "经济");
+    }
 }

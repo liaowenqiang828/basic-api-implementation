@@ -157,8 +157,10 @@ public class RsController {
 
     if (rsEventDto.isPresent() && userDto.isPresent()) {
       if (rsEventDto.get().getUserDto().getId() == userDto.get().getId()) {
-        rsEventDto.get().setEventName(rsEvent.getEventName());
-        rsEventDto.get().setKeyWord(rsEvent.getKeyWord());
+          rsEventDto.get().setEventName(rsEvent.getEventName());
+        if (rsEvent.getKeyWord() != null) {
+          rsEventDto.get().setKeyWord(rsEvent.getKeyWord());
+        }
         rsEventRepository.save(rsEventDto.get());
       } else {
         return ResponseEntity.badRequest().build();
