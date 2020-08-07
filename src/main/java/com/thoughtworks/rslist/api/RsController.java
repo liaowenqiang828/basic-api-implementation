@@ -154,12 +154,17 @@ public class RsController {
   public ResponseEntity patchRsEvent(@PathVariable int rsEventId, @RequestBody RsEvent rsEvent) {
     Optional<UserDto> userDto = userRepository.findById(rsEvent.getUserId());
     Optional<RsEventDto> rsEventDto = rsEventRepository.findById(rsEventId);
+
     if (rsEventDto.isPresent() && userDto.isPresent()) {
       if (rsEventDto.get().getUserDto().getId() == userDto.get().getId()) {
         rsEventDto.get().setEventName(rsEvent.getEventName());
         rsEventDto.get().setKeyWord(rsEvent.getKeyWord());
         rsEventRepository.save(rsEventDto.get());
+      } else {
+        return ResponseEntity.badRequest().build();
       }
+    } else {
+      return ResponseEntity.badRequest().build();
     }
     return ResponseEntity.ok().build();
   }

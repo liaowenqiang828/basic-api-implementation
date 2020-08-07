@@ -93,4 +93,16 @@ public class RsEventControllerTest {
         assertEquals("猪肉涨价了", rsEventDtoUpdated.get().getEventName());
         assertEquals("经济", rsEventDtoUpdated.get().getKeyWord());
     }
+
+    @Test
+    void should_return_bad_request_when_userId_not_match_with_eventId() throws Exception {
+        userDto = userRepository.save(userDto);
+        rsEventDto = rsEventRepository.save(rsEventDto);
+        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\",\"userId\": 2}";
+
+        mockMvc.perform(patch("/rs/update/" + rsEventDto.getUserDto().getId())
+                .content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
 }
