@@ -38,8 +38,15 @@ public class RsEventControllerTest {
     UserRepository userRepository;
     @Autowired
     RsEventRepository rsEventRepository;
+    UserDto userDto;
+    RsEventDto rsEventDto;
 
     @BeforeEach
+    void setUp() {
+       userDto = UserDto.builder().userName("li").age(20).gender("male").email("li@li.com").phone("18888888884").voteNum(4).build();
+       rsEventDto = RsEventDto.builder().eventName("猪肉涨价了").keyWord("经济").userDto(userDto).build();
+
+    }
 
     @AfterEach
         void tearDown() {
@@ -49,9 +56,8 @@ public class RsEventControllerTest {
 
     @Test
     void should_add_rs_event_when_user_exist() throws Exception {
-        UserDto save = userRepository.save(UserDto.builder().userName("li").age(20).gender("male").email("li@li.com").phone("18888888884").voteNum(4).build());
-
-        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\",\"userId\":" + save.getId() + "}";
+        userDto = userRepository.save(userDto);
+        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\",\"userId\":" + userDto.getId() + "}";
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
@@ -61,7 +67,7 @@ public class RsEventControllerTest {
         assertEquals(1, rsEventDtoList.size());
         assertEquals("猪肉涨价了", rsEventDtoList.get(0).getEventName());
         assertEquals("经济", rsEventDtoList.get(0).getKeyWord());
-//        assertEquals(save.getId(), rsEventDtoList.get(0).getUserId());
+        assertEquals(userDto.getId(), rsEventDtoList.get(0).getUserDto().getId());
     }
 
     @Test
@@ -72,8 +78,4 @@ public class RsEventControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    void should_update_rs_event_when_userId_match_with_eventId() {
-
-    }
 }

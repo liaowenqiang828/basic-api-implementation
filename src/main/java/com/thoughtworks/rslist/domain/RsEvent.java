@@ -27,11 +27,11 @@ public class RsEvent {
 
     @Ignore
     public int getUserId() {
-        return userId;
+        return this.userId;
     }
 
     @JsonIgnore
-    public void setUserId(int userId) {
+    public void setUser(int userId) {
         this.userId = userId;
     }
 

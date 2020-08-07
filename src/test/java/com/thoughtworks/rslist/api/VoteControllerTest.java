@@ -67,4 +67,5 @@ class VoteControllerTest {
                 .andExpect(jsonPath("$[0].rsEventId", is(rsEventDto.getId())))
                 .andExpect(jsonPath("$[0].voteNum", is(5)));
     }
+
 }
