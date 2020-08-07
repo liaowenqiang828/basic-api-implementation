@@ -157,7 +157,9 @@ public class RsController {
 
     if (rsEventDto.isPresent() && userDto.isPresent()) {
       if (rsEventDto.get().getUserDto().getId() == userDto.get().getId()) {
+        if (rsEvent.getEventName() != null) {
           rsEventDto.get().setEventName(rsEvent.getEventName());
+        }
         if (rsEvent.getKeyWord() != null) {
           rsEventDto.get().setKeyWord(rsEvent.getKeyWord());
         }

@@ -118,4 +118,18 @@ public class RsEventControllerTest {
         assertEquals(rsEventDto.getEventName(), "猪肉降价了");
         assertEquals(rsEventDto.getKeyWord(), "经济");
     }
+
+    @Test
+    void should_only_update_key_word() throws Exception {
+        userDto = userRepository.save(userDto);
+        rsEventDto = rsEventRepository.save(rsEventDto);
+        String jsonString = "{\"keyWord\":\"生活\",\"userId\":" + userDto.getId() + "}";
+
+        mockMvc.perform(patch("/rs/update/" + rsEventDto.getUserDto().getId())
+                .content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        rsEventDto = rsEventRepository.findById(userDto.getId()).get();
+        assertEquals(rsEventDto.getEventName(), "猪肉涨价了");
+        assertEquals(rsEventDto.getKeyWord(), "生活");
+    }
 }
