@@ -146,7 +146,22 @@ public class RsController {
     mapConcate.putAll(stringMap);
 
     RsEvent newRsEvent = new RsEvent(mapConcate.get("eventName"), mapConcate.get("keyWord"));
+
     rsEventList.set(index - 1, newRsEvent);
+  }
+
+  @PatchMapping("/rs/update/{rsEventId}")
+  public ResponseEntity patchRsEvent(@PathVariable int rsEventId, @RequestBody RsEvent rsEvent) {
+    Optional<UserDto> userDto = userRepository.findById(rsEvent.getUserId());
+    Optional<RsEventDto> rsEventDto = rsEventRepository.findById(rsEventId);
+    if (rsEventDto.isPresent() && userDto.isPresent()) {
+      if (rsEventDto.get().getUserDto().getId() == userDto.get().getId()) {
+        rsEventDto.get().setEventName(rsEvent.getEventName());
+        rsEventDto.get().setKeyWord(rsEvent.getKeyWord());
+        rsEventRepository.save(rsEventDto.get());
+      }
+    }
+    return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("/rs/{index}")

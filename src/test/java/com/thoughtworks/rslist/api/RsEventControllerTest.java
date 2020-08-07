@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -78,4 +79,18 @@ public class RsEventControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void should_update_rs_event_when_userId_match_with_eventId() throws Exception {
+        userDto = userRepository.save(userDto);
+        rsEventDto = rsEventRepository.save(rsEventDto);
+        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\",\"userId\":" + userDto.getId() + "}";
+
+        mockMvc.perform(patch("/rs/update/" + rsEventDto.getUserDto().getId())
+                .content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        Optional<RsEventDto> rsEventDtoUpdated = rsEventRepository.findById(rsEventDto.getId());
+        assertEquals("猪肉涨价了", rsEventDtoUpdated.get().getEventName());
+        assertEquals("经济", rsEventDtoUpdated.get().getKeyWord());
+    }
 }
