@@ -91,4 +91,11 @@ class VoteControllerTest {
         userDto = userRepository.findById(userDto.getId()).get();
         assertEquals(0, userDto.getVoteNum());
     }
+
+    @Test
+    void should_return_400_when_user_voteNum_less_than_vote_voteNum() throws Exception {
+        String jsonString = "{\"voteNum\":10,\"userId\":1,\"localDateTime\":\"2020-08-07T21:00:42.669\"}";
+        mockMvc.perform(post("/rs/vote/1").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
