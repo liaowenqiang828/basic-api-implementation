@@ -86,8 +86,8 @@ class VoteControllerTest {
 
     @Test
     void should_vote_success() throws Exception {
-        String jsonString = "{\"voteNum\":5,\"userId\":1,\"localDateTime\":\"2020-08-07T21:00:42.669\"}";
-        mockMvc.perform(post("/rs/vote/1").content(jsonString).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        String jsonString = "{\"voteNum\":5,\"userId\":2,\"localDateTime\":\"2020-08-07T21:00:42.669\"}";
+        mockMvc.perform(post("/rs/vote/2").content(jsonString).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
         userDto = userRepository.findById(userDto.getId()).get();
         assertEquals(0, userDto.getVoteNum());
     }
