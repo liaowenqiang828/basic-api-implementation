@@ -41,7 +41,6 @@ public class RsController {
     if (index < 1 || index > rsEventDtoList.size()) {
       throw new RsEventIndexInvalidException("invalid index");
     }
-//    return ResponseEntity.ok(rsEventDtoList.get(index - 1));
     return ResponseEntity.ok(rsEventDtoList.get(index - 1));
   }
 
@@ -63,15 +62,6 @@ public class RsController {
   @PostMapping("/rs/event")
   public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
     List<RsEventDto> rsEventDtoList = rsEventRepository.findAll();
-
-//    ObjectMapper objectMapper = new ObjectMapper();
-//    RsEvent event = objectMapper.readValue(rsEvent, RsEvent.class);
-//
-//    String insertedUserName = rsEvent.getUser().getUserName();
-//    List<RsEvent> rsEventListFiltered = rsEventList.stream().filter(rsEvent1 -> rsEvent1.getUser().getUserName() == insertedUserName).collect(Collectors.toList());
-//    if (rsEventListFiltered.isEmpty()) {
-//      userList.add(rsEvent.getUser());
-//    }
     Optional<UserDto> userDto = userRepository.findById(rsEvent.getUserId());
     if (!userRepository.findById(rsEvent.getUserId()).isPresent()) {
       return ResponseEntity.badRequest().build();
@@ -88,25 +78,6 @@ public class RsController {
   public List<UserDto> getUsersList() {
     return userRepository.findAll();
   }
-
-//  @PatchMapping("/rs/{index}")
-//  public void patchRsEvent(@PathVariable int index, @RequestBody String jsonString) throws JsonProcessingException {
-//    List<RsEventDto> rsEventDtoList = rsEventRepository.findAll();
-//
-//    ObjectMapper objectMapper = new ObjectMapper();
-//    RsEventDto originRsEventDto = rsEventDtoList.get(index - 1);
-//
-//    Map<String, String> stringMap = objectMapper.readValue(jsonString, Map.class);
-//    Map rsEventMap = objectMapper.convertValue(originRsEventDto, Map.class);
-//
-//    Map<String, String> mapConcate = new HashMap<>();
-//    mapConcate.putAll(rsEventMap);
-//    mapConcate.putAll(stringMap);
-//
-//    RsEvent newRsEvent = new RsEvent(mapConcate.get("eventName"), mapConcate.get("keyWord"));
-//
-//    rsEventDtoList.set(index - 1, newRsEvent);
-//  }
 
   @PatchMapping("/rs/update/{rsEventId}")
   public ResponseEntity patchRsEvent(@PathVariable int rsEventId, @RequestBody RsEvent rsEvent) {
@@ -134,7 +105,8 @@ public class RsController {
   @DeleteMapping("/rs/{index}")
   public void deleteRsEventByIndex(@PathVariable int index) {
     List<RsEventDto> rsEventDtoList = rsEventRepository.findAll();
-    rsEventDtoList.remove(index - 1);
+    RsEventDto rsEventDto = rsEventDtoList.remove(index - 1);
+    rsEventRepository.delete(rsEventDto);
   }
 
   @PostMapping("/rs/add")

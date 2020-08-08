@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -68,55 +70,10 @@ class RsListApplicationTests {
     }
 
     @Test
-    void should_return_add_rs_event() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 4);
-        RsEvent rsEvent = new RsEvent("猪肉涨价了", "经济", 4, 0);
-        String jsonString = objectMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(content().string("3"));
-        mockMvc.perform(get("/rs/list"))
-                .andExpect(jsonPath("$", hasSize(4)))
-                .andExpect(jsonPath("$[0].eventName", is("第一事件")))
-                .andExpect(jsonPath("$[0].keyWord", is("无标签")))
-                .andExpect(jsonPath("$[1].eventName", is("第二事件")))
-                .andExpect(jsonPath("$[1].keyWord", is("无标签")))
-                .andExpect(jsonPath("$[2].eventName", is("第三事件")))
-                .andExpect(jsonPath("$[2].keyWord", is("无标签")))
-                .andExpect(jsonPath("$[3].eventName", is("猪肉涨价了")))
-                .andExpect(jsonPath("$[3].keyWord", is("经济")))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void should_patch_rs_event_by_index() throws Exception {
-        String jsonString = "{\"keyWord\":\"生活\"}";
-        mockMvc.perform(patch("/rs/1").content(jsonString).contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/list"))
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].eventName", is("第一事件")))
-                .andExpect(jsonPath("$[0].keyWord", is("生活")))
-                .andExpect(jsonPath("$[1].eventName", is("第二事件")))
-                .andExpect(jsonPath("$[1].keyWord", is("无标签")))
-                .andExpect(jsonPath("$[2].eventName", is("第三事件")))
-                .andExpect(jsonPath("$[2].keyWord", is("无标签")))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     void should_delete_rs_event_by_index() throws Exception {
         mockMvc.perform(delete("/rs/2").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
-        mockMvc.perform(get("/rs/list"))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].eventName", is("第一事件")))
-                .andExpect(jsonPath("$[0].keyWord", is("无标签")))
-                .andExpect(jsonPath("$[1].eventName", is("第三事件")))
-                .andExpect(jsonPath("$[1].keyWord", is("无标签")));
+        assertEquals(rsEventRepository.findAll().size(), 2);
     }
 
     @Test
