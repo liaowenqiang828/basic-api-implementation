@@ -8,6 +8,7 @@ import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,11 @@ class RsListApplicationTests {
         rsEventRepository.save(RsEventDto.builder().eventName("第二事件").keyWord("无标签").voteNum(5).userDto(userDto2).build());
         rsEventRepository.save(RsEventDto.builder().eventName("第三事件").keyWord("无标签").voteNum(5).userDto(userDto3).build());
     }
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
+        rsEventRepository.deleteAll();
+    }
 
     @Test
     void get_one_rs_event_by_index() throws Exception {
@@ -83,25 +89,6 @@ class RsListApplicationTests {
         User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 4);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void should_add_user_to_user_list() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiQin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 4);
-        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", 5, 0);
-
-        String jsonString = objectMapper.writeValueAsString(rsEvent);
-//        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\",\"user\": {\"userName\":\"xyxia\",\"age\": 19,\"gender\": \"male\",\"email\": \"a@b.com\",\"phone\": \"18888888888\"}}";
-
-        mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
-
-        mockMvc.perform(get("/user"))
-                .andExpect(jsonPath("$", hasSize(4)))
-                .andExpect(jsonPath("$[3].user.userName", is("xyxia")))
                 .andExpect(status().isOk());
     }
 
@@ -158,8 +145,10 @@ class RsListApplicationTests {
     void should_return_201_and_index() throws Exception{
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiMin", 19, "male", "xiao.ming@thoughtworks.com", "18888888888", 4);
-        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", 5, 0);
+        UserDto userDto = UserDto.builder().userName("XiMin").age(25).gender("male")
+                .email("xiao.ming@thoughtworks.com").phone("19999999999").voteNum(5).build();
+        userDto = userRepository.save(userDto);
+        RsEvent rsEvent = new RsEvent("又添加一条热搜", "娱乐", userDto.getId(), 0);
         String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/add").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -199,19 +188,6 @@ class RsListApplicationTests {
     }
 
     @Test
-    void should_throw_index_param_exception() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        User user = new User("XiaoMiiiiiii", 19, "male", "xiaomi@thoughtworks.com", "18888888888", 4);
-        RsEvent rsEvent = new RsEvent("添加一条热搜", "娱乐", 5, 0);
-        String jsonString = objectMapper.writeValueAsString(rsEvent);
-
-        mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("invalid param")));
-    }
-
-    @Test
     void should_throw_invalid_request_param_exception() throws Exception {
         mockMvc.perform(get("/rs/list?start=1&end=10"))
                 .andExpect(status().isBadRequest())
@@ -227,11 +203,6 @@ class RsListApplicationTests {
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid user")));
-    }
-
-    @Test
-    void should_return_all_users() throws Exception {
-
     }
 
 }

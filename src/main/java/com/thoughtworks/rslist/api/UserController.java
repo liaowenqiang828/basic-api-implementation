@@ -59,6 +59,11 @@ public class UserController {
 //        return rsEventList;
 //    }
 
+    @GetMapping("/user")
+    public List<UserDto> getUsersList() {
+        return userRepository.findAll();
+    }
+
     @PostMapping("/user")
     public void userRegister(@RequestBody @Valid User user) {
         UserDto userDto = new UserDto();

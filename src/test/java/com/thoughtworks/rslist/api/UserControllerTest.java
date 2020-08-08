@@ -50,12 +50,6 @@ public class UserControllerTest {
         objectMapper = new ObjectMapper();
         userDto = UserDto.builder().userName("li").age(20)
                 .gender("male").email("li@li.com").phone("18888888884").voteNum(4).build();
-//        UserDto userDto1 = UserDto.builder().userName("zhao").age(20).gender("male").email("zhao@zhao.com").phone("18888888881").voteNum(1).build();
-//        UserDto userDto2 = UserDto.builder().userName("qian").age(20).gender("male").email("qian@qian.com").phone("18888888882").voteNum(2).build();
-//        UserDto userDto3 = UserDto.builder().userName("sun").age(20).gender("male").email("sun@sun.com").phone("18888888883").voteNum(3).build();
-//        userRepository.save(userDto1);
-//        userRepository.save(userDto2);
-//        userRepository.save(userDto3);
     }
 
     @AfterEach
@@ -93,8 +87,8 @@ public class UserControllerTest {
 
     @Test
     void should_delete_user_by_id () throws Exception {
-        userRepository.save(userDto);
-        mockMvc.perform(delete("/user/1").contentType(MediaType.APPLICATION_JSON))
+        userDto = userRepository.save(userDto);
+        mockMvc.perform(delete("/user/2").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         List<UserDto> userDotList = userRepository.findAll();
         assertEquals(0, userDotList.size());

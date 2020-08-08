@@ -46,7 +46,6 @@ public class RsEventControllerTest {
     void setUp() {
        userDto = UserDto.builder().userName("li").age(20).gender("male").email("li@li.com").phone("18888888884").voteNum(4).build();
        rsEventDto = RsEventDto.builder().eventName("猪肉涨价了").keyWord("经济").userDto(userDto).build();
-
     }
 
     @AfterEach
@@ -98,7 +97,7 @@ public class RsEventControllerTest {
     void should_return_bad_request_when_userId_not_match_with_eventId() throws Exception {
         userDto = userRepository.save(userDto);
         rsEventDto = rsEventRepository.save(rsEventDto);
-        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\",\"userId\": 2}";
+        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyWord\":\"经济\",\"userId\": 1}";
 
         mockMvc.perform(patch("/rs/update/" + rsEventDto.getUserDto().getId())
                 .content(jsonString).contentType(MediaType.APPLICATION_JSON))

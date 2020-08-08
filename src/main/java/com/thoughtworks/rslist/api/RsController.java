@@ -66,17 +66,13 @@ public class RsController {
     if (!userRepository.findById(rsEvent.getUserId()).isPresent()) {
       return ResponseEntity.badRequest().build();
     }
-    RsEventDto rsEventDto = RsEventDto.builder().eventName(rsEvent.getEventName()).keyWord(rsEvent.getKeyWord())
+    RsEventDto rsEventDto = RsEventDto.builder()
+            .eventName(rsEvent.getEventName()).keyWord(rsEvent.getKeyWord())
             .userDto(userDto.get()).build();
     rsEventRepository.save(rsEventDto);
 
     return ResponseEntity.created(null)
             .body(String.valueOf(rsEventDtoList.size() - 1));
-  }
-
-  @GetMapping("/user")
-  public List<UserDto> getUsersList() {
-    return userRepository.findAll();
   }
 
   @PatchMapping("/rs/update/{rsEventId}")
